@@ -9,23 +9,26 @@ var faker = require('faker');
 
 var censored = require('./censoredWords');
 var users = require('./users.js');
+var onlineUsers = {};
 
 
 app.use(express.static('public'));
 
 
-
 io.on('connection', function(socket){
-    console.log('a user connected');
+
+    socket.join('lobby');
+    console.log()
 
     socket.on("message", function (msg){
         var sendMessage = true;
-        console.log(msg.message);
+        //set socketId for private chats
+        onlineUsers[msg.username] = socket.id;
         //break up into individual words
         var allWords = msg.message.split(' ');
         //caching length
         var length = allWords.length;
-        //check for censored words, using for loop for faster performance
+        //check for censored words
         for(var i = 0; i < length; i++){
             if(censored[allWords[i]]){
                 sendMessage = false;
@@ -34,12 +37,12 @@ io.on('connection', function(socket){
         }
         //if no presence of censored words then emit
         if(sendMessage){
-            socket.emit('chat', msg);
+            io.to('lobby').emit('chat', msg);
         }
 
     });
-    var emitMessage = function(x){
-        socket.emit('chat', x);
+    var emitMessage = function(msg){
+        socket.to('lobby').emit('chat', msg);
     };
 
     var userSendMessage = function(){ async.each(users, function(user, cb){
@@ -50,7 +53,27 @@ io.on('connection', function(socket){
     };
 
     //five messages per minute
-    setInterval(userSendMessage,2000);
+    //setInterval(userSendMessage,12000);
+
+    socket.on('privateMessage', function (msg){
+        var theirId = onlineUsers[msg.otherUser];
+        var myId = onlineUsers[msg.username];
+        //because we censor messages on server, need to emit to both people
+        socket.to(theirId).emit('chat', msg);
+        io.to(myId).emit('chat', msg);
+    });
+
+    socket.on('leave lobby', function(){
+        socket.leave('lobby');
+    });
+
+    socket.on('join lobby', function(){
+        socket.join('lobby');
+    });
+
+    socket.on('disconnect', function(){
+       delete onlineUsers[socket.username];
+    });
 });
 
 http.listen(port, function(){

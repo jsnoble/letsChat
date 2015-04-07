@@ -18,12 +18,22 @@
     </div>
 
     <form class="chat">
-        <div class="form-group">
+        <div class = 'names'>
+        <div class="form-group col-lg-6">
             <label>Username</label>
             <input type="text" class="form-control" id="username" placeholder="Enter username">
         </div>
-        <div class="form-group">
-            <label>Message</label>
+            <div class="col-lg-6">
+                <label>Private Message</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="otherUser" placeholder="Their username">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="PM">Private Message</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+            <div class="form-group">
             <input type="text" class="form-control" id="message" placeholder="Your message">
         </div>
         <button type="submit" class="btn btn-default" id="submit">Submit</button>
