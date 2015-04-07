@@ -11,9 +11,7 @@ $('#submit').on('click',function(e){
 });
 
 socket.on('chat', function(msg){
-
     var str = msg.username+": "+ msg.message;
-    console.log('message', str);
     $('.messages').append($('<li>').text(str))
 
 });

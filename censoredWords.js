@@ -16,7 +16,7 @@
  console.log (censorList);
  })();
 *
-* used node as commandline
+* used node as CLI
 * node server.js > censoredWords.js
 * */
 
