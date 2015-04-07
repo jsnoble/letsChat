@@ -4,6 +4,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
+var redis = require('socket.io-redis');
+io.adapter(redis({ host: 'localhost', port: 6379 }));
 var async  = require('async');
 var faker = require('faker');
 
@@ -18,7 +20,6 @@ app.use(express.static('public'));
 io.on('connection', function(socket){
 
     socket.join('lobby');
-    console.log()
 
     socket.on("message", function (msg){
         var sendMessage = true;
@@ -53,7 +54,7 @@ io.on('connection', function(socket){
     };
 
     //five messages per minute
-    //setInterval(userSendMessage,12000);
+    setInterval(userSendMessage,12000);
 
     socket.on('privateMessage', function (msg){
         var theirId = onlineUsers[msg.otherUser];
