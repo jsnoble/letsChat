@@ -1,6 +1,8 @@
 
 var socket = io();
 var isPm = false;
+//caching messages to help look up times
+var messageBox=   $('.messages');
 
 $('#submit').on('click',function(e){
     e.preventDefault();
@@ -17,8 +19,9 @@ $('#submit').on('click',function(e){
 });
 
 socket.on('chat', function(msg){
-    var str = msg.username+": "+ msg.message;
-    $('.messages').append($('<li>').text(str))
+   // var str = msg.username+": "+ msg.message;
+    messageBox.prepend($('<li>').text(msg.username+": "+ msg.message));
+   // messageBox.scrollTop(messageBox[0].scrollHeight);
 
 });
 
